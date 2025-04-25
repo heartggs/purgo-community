@@ -1,0 +1,1270 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "Final Backend API 명세서(커뮤니티)",
+      "description": "JWT + Redis 기반 인증 API 명세서입니다.",
+      "contact": {
+        "name": "Purgo",
+        "email": "team4@example.com"
+      },
+      "version": "v1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Generated server url"
+      }
+    ],
+    "paths": {
+      "/api/user/profile": {
+        "get": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "프로필 조회",
+          "description": "로그인한 사용자의 프로필 정보를 반환합니다.",
+          "operationId": "getProfile",
+          "responses": {
+            "200": {
+              "description": "프로필 조회 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/UserProfileDto"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        },
+        "put": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "프로필 수정",
+          "description": "닉네임 또는 프로필 이미지를 수정합니다.",
+          "operationId": "updateProfile",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateProfileDto"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "프로필 수정 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/post/update/{postId}": {
+        "put": {
+          "tags": [
+            "post-controller"
+          ],
+          "summary": "게시물 수정",
+          "description": "게시물 ID와 수정할 내용을 받아 해당 게시물을 수정합니다.",
+          "operationId": "updatePost",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "게시물이 성공적으로 수정되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Response"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/comment/{commentId}": {
+        "put": {
+          "tags": [
+            "comment-controller"
+          ],
+          "summary": "댓글 수정",
+          "description": "작성한 댓글의 내용을 수정합니다.",
+          "operationId": "updateComment",
+          "parameters": [
+            {
+              "name": "commentId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "댓글이 성공적으로 수정되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        },
+        "delete": {
+          "tags": [
+            "comment-controller"
+          ],
+          "summary": "댓글 삭제",
+          "description": "작성한 댓글을 삭제합니다.",
+          "operationId": "deleteComment",
+          "parameters": [
+            {
+              "name": "commentId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "댓글이 성공적으로 삭제되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/user/profile/upload": {
+        "post": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "프로필 이미지 업로드",
+          "description": "사용자의 프로필 이미지를 업로드합니다.",
+          "operationId": "uploadProfileImage",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "업로드할 이미지 파일",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "OK",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/user/penaltyCount": {
+        "post": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "패널티 횟수 조회",
+          "description": "로그인한 사용자의 누적 패널티 횟수를 반환합니다.",
+          "operationId": "getPenaltyCount",
+          "responses": {
+            "200": {
+              "description": "패널티 횟수가 성공적으로 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/user/limits": {
+        "post": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "제한 정보 조회",
+          "description": "로그인한 사용자의 서비스 이용 제한 정보를 반환합니다.",
+          "operationId": "getLimitInfo",
+          "responses": {
+            "200": {
+              "description": "제한 정보가 성공적으로 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/post/create": {
+        "post": {
+          "tags": [
+            "post-controller"
+          ],
+          "summary": "게시물 생성",
+          "description": "요청한 게시글 정보를 기반으로 새 게시물을 생성합니다.",
+          "operationId": "createPost",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "게시물이 성공적으로 생성되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Response"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/comment/{postId}": {
+        "get": {
+          "tags": [
+            "comment-controller"
+          ],
+          "summary": "댓글 목록 조회",
+          "description": "특정 게시글에 작성된 모든 댓글을 조회합니다.",
+          "operationId": "getCommentsByPostId",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "댓글 목록이 성공적으로 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CommentResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "comment-controller"
+          ],
+          "summary": "댓글 작성",
+          "description": "특정 게시글에 댓글을 작성합니다.",
+          "operationId": "createComment",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "댓글이 성공적으로 작성되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/auth/signup": {
+        "post": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "회원가입",
+          "description": "회원 정보를 받아 회원가입을 진행합니다.",
+          "operationId": "signup",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthDto"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "회원가입 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/resetPassword": {
+        "post": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "비밀번호 재설정",
+          "description": "사용자의 id와 email을 확인해 사용자가 원하는 비밀번호로 재설정 합니다.",
+          "operationId": "resetPassword",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "비밀번호 재설정 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/refresh": {
+        "post": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "토큰 재발급",
+          "description": "Refresh Token을 받아 인가 확인 후 토큰을 재발급합니다.",
+          "operationId": "refreshToken",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "토큰 재발급 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/logout": {
+        "post": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "로그아웃",
+          "description": "회원 정보를 받아 로그아웃을 진행하고 발급된 토큰을 삭제 및 블랙리스트 처리합니다.",
+          "operationId": "logout",
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "로그아웃 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/login": {
+        "post": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "로그인",
+          "description": "회원 정보를 받아 로그인을 진행하고 로그인 성공 시 토큰을 발급합니다.",
+          "operationId": "login",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginRequest"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "로그인 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/findId": {
+        "post": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "아이디 찾기",
+          "description": "사용자가 입력한 ID가 기존에 존재했는지 확인 합니다.",
+          "operationId": "findIdByEmail",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "아이디 찾기 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/search": {
+        "get": {
+          "tags": [
+            "search-controller"
+          ],
+          "summary": "게시글 검색",
+          "description": "키워드를 기준으로 제목 또는 내용에 해당하는 게시글을 검색합니다.",
+          "operationId": "searchPosts",
+          "parameters": [
+            {
+              "name": "keyword",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "page",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "size",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 8
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "direction",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "default": "DESC"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "검색된 게시글 목록이 성공적으로 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PageResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/post/{postId}": {
+        "get": {
+          "tags": [
+            "post-controller"
+          ],
+          "summary": "상세 게시물 조회",
+          "description": "게시물 ID를 통해 해당 게시물의 상세 정보를 조회합니다.",
+          "operationId": "getPost",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            {
+              "name": "increaseView",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "boolean",
+                "default": true
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "지정한 ID에 해당하는 게시물의 상세 정보가 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Response"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/post/my": {
+        "get": {
+          "tags": [
+            "post-controller"
+          ],
+          "summary": "내 게시물 조회",
+          "description": "로그인한 사용자가 작성한 게시글 목록을 조회합니다.",
+          "operationId": "getMyPosts",
+          "parameters": [
+            {
+              "name": "page",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "size",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 5
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "direction",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "default": "DESC"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "사용자가 작성한 게시글 목록이 성공적으로 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PageResponse"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/post/list": {
+        "get": {
+          "tags": [
+            "post-controller"
+          ],
+          "summary": "전체 게시물 조회",
+          "description": "전체 게시물을 조회할 수 있습니다.",
+          "operationId": "getPosts",
+          "parameters": [
+            {
+              "name": "page",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 0
+              }
+            },
+            {
+              "name": "size",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32",
+                "default": 8
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "default": "createdAt"
+              }
+            },
+            {
+              "name": "direction",
+              "in": "query",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "default": "DESC"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "게시글 목록이 성공적으로 반환됩니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/PageResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/checkName": {
+        "get": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "닉네임 중복 검사",
+          "description": "사용자가 입력한 닉네임이 중복되었는지 확인합니다.",
+          "operationId": "checkName",
+          "parameters": [
+            {
+              "name": "username",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "닉네임 중복 검사 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/checkId": {
+        "get": {
+          "tags": [
+            "auth-controller"
+          ],
+          "summary": "아이디 중복 검사",
+          "description": "사용자가 입력한 ID가 중복되었는지 확인합니다.",
+          "operationId": "checkId",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "query",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "아이디 중복 검사 성공",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/user/delete": {
+        "delete": {
+          "tags": [
+            "user-controller"
+          ],
+          "summary": "회원 탈퇴",
+          "description": "로그인한 사용자의 계정을 삭제합니다.",
+          "operationId": "deleteUser",
+          "responses": {
+            "200": {
+              "description": "회원 탈퇴가 완료되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      },
+      "/api/post/delete/{postId}": {
+        "delete": {
+          "tags": [
+            "post-controller"
+          ],
+          "summary": "게시물 삭제",
+          "description": "게시물 ID를 받아 해당 게시물을 삭제합니다.",
+          "operationId": "deletePost",
+          "parameters": [
+            {
+              "name": "postId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "게시물이 성공적으로 삭제되었습니다.",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "UpdateProfileDto": {
+          "type": "object",
+          "properties": {
+            "username": {
+              "type": "string"
+            },
+            "profileImage": {
+              "type": "string"
+            }
+          }
+        },
+        "Request": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            }
+          }
+        },
+        "Response": {
+          "type": "object",
+          "properties": {
+            "postId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "userId": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "image": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "commentCount": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "CommentRequest": {
+          "type": "object",
+          "properties": {
+            "content": {
+              "type": "string"
+            }
+          }
+        },
+        "AuthDto": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "pw": {
+              "type": "string"
+            },
+            "profileImage": {
+              "type": "string"
+            }
+          }
+        },
+        "RefreshTokenRequest": {
+          "type": "object",
+          "properties": {
+            "refreshToken": {
+              "type": "string"
+            }
+          }
+        },
+        "LoginRequest": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "pw": {
+              "type": "string"
+            }
+          }
+        },
+        "UserProfileDto": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "id": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "profileImage": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "PageResponse": {
+          "type": "object",
+          "properties": {
+            "totalElements": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "totalPages": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "size": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "content": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Response"
+              }
+            },
+            "number": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "sort": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SortObject"
+              }
+            },
+            "first": {
+              "type": "boolean"
+            },
+            "last": {
+              "type": "boolean"
+            },
+            "numberOfElements": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "pageable": {
+              "$ref": "#/components/schemas/PageableObject"
+            },
+            "empty": {
+              "type": "boolean"
+            }
+          }
+        },
+        "PageableObject": {
+          "type": "object",
+          "properties": {
+            "offset": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "sort": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/SortObject"
+              }
+            },
+            "pageNumber": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "paged": {
+              "type": "boolean"
+            },
+            "pageSize": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "unpaged": {
+              "type": "boolean"
+            }
+          }
+        },
+        "SortObject": {
+          "type": "object",
+          "properties": {
+            "direction": {
+              "type": "string"
+            },
+            "nullHandling": {
+              "type": "string"
+            },
+            "ascending": {
+              "type": "boolean"
+            },
+            "property": {
+              "type": "string"
+            },
+            "ignoreCase": {
+              "type": "boolean"
+            }
+          }
+        },
+        "CommentResponse": {
+          "type": "object",
+          "properties": {
+            "commentId": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "userId": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "content": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
